@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.skyband.ecr.sdk.BuildConfig
+import com.skyband.ecr.sdk.CLibraryLoad
 import id.im.skybandtest1.databinding.ActivityMainBinding
 import id.im.skybandtest1.model.ActiveTxnData
 import id.im.skybandtest1.transaction.TransactionType
@@ -30,7 +31,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val paymentReceiver:BroadcastReceiver =object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            binding.tv.append( "\n")
             binding.tv.append( intent.toString())
+            val data = intent?.getStringExtra("response")
+            if(data?.isNotEmpty() == true){
+                binding.tv.append( "\n")
+                binding.tv.append( data)
+            }
 
         }
     }
@@ -67,18 +74,23 @@ class MainActivity : AppCompatActivity() {
         try {
 
             val amountInt = (amount * 100).toInt()
-            homeViewModel.setReqData(amountInt,this)
-//            val date = SimpleDateFormat("yyyyMMddHHmmss").format(System.currentTimeMillis())
-//            val command = "$date;$amountInt;1;123456780001!;"
-
-            val packData: ByteArray = homeViewModel.getPackData()
-            val intent: Intent = packageManager.getLaunchIntentForPackage("com.skyband.pos.app") ?: Intent()
-            intent.putExtra("message", "ecr-txn-event")
-            intent.putExtra("request", packData)
-            intent.putExtra("packageName",  "id.im.skybandtest1")
-            startActivity(intent)
+            val date = SimpleDateFormat("ddMMyyhhmmss").format(System.currentTimeMillis())
+            val command = "$date;$amountInt;0;12345678000001!"
+            val packData =CLibraryLoad.getInstance().getPackData(command,0,"");
+            binding.tv.append("\nData: ")
+            binding.tv.append(command)
+            val intent: Intent? = packageManager.getLaunchIntentForPackage("com.skyband.pos.app")
+            intent?.let {
+                intent.putExtra("message", "ecr-txn-event")
+                intent.putExtra("request", packData)
+                intent.putExtra("packageName",  "id.im.skybandtest1")
+                startActivity(intent)
+            }?:run{
+                throw Exception("target com.skyband.pos.app not found")
+            }
         } catch (e: Exception) {
-            binding.tv.text = e.message
+            binding.tv.append("\n")
+            binding.tv.append(e.toString())
         }
     }
 
