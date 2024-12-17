@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId = "id.im.skybandtest1"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 3
-        versionName = "3"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -74,16 +74,19 @@ class MainActivity : AppCompatActivity() {
         try {
 
             val amountInt = (amount * 100).toInt()
-            val date = SimpleDateFormat("ddMMyyhhmmss").format(System.currentTimeMillis())
+            val date = SimpleDateFormat("ddMMyyHHmmss").format(System.currentTimeMillis())
             val command = "$date;$amountInt;0;12345678000001!"
-            val packData =CLibraryLoad.getInstance().getPackData(command,0,"");
+            val packData =CLibraryLoad.getInstance().getPackData(command,0,"aaa")
             binding.tv.append("\nData: ")
             binding.tv.append(command)
+            binding.tv.append("\nPackData: ")
+            binding.tv.append(String(packData))
             val intent: Intent? = packageManager.getLaunchIntentForPackage("com.skyband.pos.app")
             intent?.let {
                 intent.putExtra("message", "ecr-txn-event")
                 intent.putExtra("request", packData)
                 intent.putExtra("packageName",  "id.im.skybandtest1")
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
             }?:run{
                 throw Exception("target com.skyband.pos.app not found")
