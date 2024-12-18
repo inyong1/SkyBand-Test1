@@ -2,7 +2,6 @@ package id.im.skybandtest1.model;
 
 import android.bluetooth.BluetoothDevice;
 
-import id.im.skybandtest1.transaction.TransactionType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 public class ActiveTxnData {
 
     private String reqData;
-    private TransactionType transactionType;
+//    private TransactionType transactionType;
     private String terminalID;
     private String szSignature;
     private String ecrReferenceNo="12345678";
@@ -54,13 +53,13 @@ public class ActiveTxnData {
         this.reqData = reqData;
     }
 
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
+//    public TransactionType getTransactionType() {
+//        return transactionType;
+//    }
+//
+//    public void setTransactionType(TransactionType transactionType) {
+//        this.transactionType = transactionType;
+//    }
 
     public String getEcrReferenceNo() {
         return ecrReferenceNo;

@@ -1,33 +1,21 @@
 package id.im.skybandtest1
 
-import android.R
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.skyband.ecr.sdk.BuildConfig
 import com.skyband.ecr.sdk.CLibraryLoad
 import id.im.skybandtest1.databinding.ActivityMainBinding
-import id.im.skybandtest1.model.ActiveTxnData
-import id.im.skybandtest1.transaction.TransactionType
-import id.im.skybandtest1.ui.fragment.home.HomeViewModel
 import id.im.skybandtest1.util.ECRUtils
-import java.security.AccessController.getContext
 import java.text.SimpleDateFormat
 
 
 class MainActivity : AppCompatActivity() {
-    private val homeViewModel = HomeViewModel()
     private lateinit var binding: ActivityMainBinding
     private val paymentReceiver:BroadcastReceiver =object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -76,7 +64,7 @@ class MainActivity : AppCompatActivity() {
             val amountInt = (amount * 100).toInt()
             val date = SimpleDateFormat("ddMMyyHHmmss").format(System.currentTimeMillis())
             val command = "$date;$amountInt;0;12345678000001!"
-            val packData =CLibraryLoad.getInstance().getPackData(command,0,"aaa")
+            val packData =CLibraryLoad.getInstance().getPackData(command,0,"")
             binding.tv.append("\nData: ")
             binding.tv.append(command)
             binding.tv.append("\nPackData: ")
