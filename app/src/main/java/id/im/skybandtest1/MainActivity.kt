@@ -12,7 +12,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.skyband.ecr.sdk.CLibraryLoad
 import id.im.skybandtest1.databinding.ActivityMainBinding
 import id.im.skybandtest1.util.ECRUtils
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,6 +55,23 @@ class MainActivity : AppCompatActivity() {
         ECRUtils.sendAndReceiveBroadcast(this)
     }
 
+    fun computeSha256Hash(combinedValue: String): String {
+        // Last Six digit of ecr reference number + terminal id == combined value
+
+        val md = MessageDigest.getInstance("SHA-256")
+        val hashInBytes = md.digest(combinedValue.toByteArray())
+
+        val sb = StringBuilder()
+
+        for (b in hashInBytes) {
+            sb.append(String.format("%02x", b))
+        }
+
+        val resultSHA = sb.toString()
+
+        return resultSHA
+    }
+
     private fun onButtonPayClick() {
         val amount = binding.et.text.toString().trim().toDoubleOrNull() ?: 0.0
         if(amount == 0.0){
@@ -62,9 +81,11 @@ class MainActivity : AppCompatActivity() {
         try {
 
             val amountInt = (amount * 100).toInt()
-            val date = SimpleDateFormat("ddMMyyHHmmss").format(System.currentTimeMillis())
-            val command = "$date;$amountInt;0;12345678000001!"
-            val packData =CLibraryLoad.getInstance().getPackData(command,0,"")
+            val date = SimpleDateFormat("ddMMyyHHmmss", Locale.getDefault()).format(System.currentTimeMillis())
+            val combined = "12345678000001"
+            val signature = computeSha256Hash(combined)
+            val command = "$date;$amountInt;0;$combined!"
+            val packData =CLibraryLoad.getInstance().getPackData(command,0,signature)
             binding.tv.append("\nData: ")
             binding.tv.append(command)
             binding.tv.append("\nPackData: ")
